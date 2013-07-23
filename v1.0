@@ -1,0 +1,169 @@
+void repaint(int[] ballX, int[] ballY, int[] mapX, int[] mapY, int[] targetX, int[] targetY, int[] objectX, int[] objectY, int[] objectType, boolean[] objectUsed, int[] score){
+    int i = 0;
+	String scoreb;
+	setColor(white);
+	fillRectangle(0,0,getDrawingWidth(),getDrawingHeight());
+
+	setColor(azure);
+	fillRectangle(20,20,mapX[0],mapY[0]);
+
+	for(i=0;i<10;i++){
+		if (objectType[i]==0 && objectUsed[i] == false) {
+			setColor(red);
+			fillCircle(objectX[i]+20, objectY[i]+20, 10);
+		}
+		if (objectType[i]!=0 && objectUsed[i] == false) {
+			setColor(lightSteelBlue);
+			fillCircle(objectX[i]+20, objectY[i]+20, 10);
+		}
+	}
+
+	setColor(black);
+	drawRectangle(20,20,mapX[0],mapY[0]);
+	drawRectangle(19,19,mapX[0]+2,mapY[0]+2);
+	
+	setColor(cyan);
+	fillCircle(targetX[0]+20,targetY[0]+20,10);
+	setColor(blue);
+	fillCircle(ballX[0]+20,ballY[0]+20,10);
+
+	
+	setColor(black);
+	scoreb = "Score: " + score[0];
+	drawString(scoreb, true, false, 18, 335, 350);
+	
+}
+
+
+
+void updateLocation(int[] uinput, int[] ballX, int[] ballY, int[] targetX, int[] targetY, boolean[] win, int[] objectX, int[] objectY, int[] objectType, boolean[] objectUsed, int[] score, boolean[] gover){
+	int i=0;
+	if(uinput[0]==1 && ballY[0] >= 10){ ballY[0] = ballY[0] - 10; }  //up
+	if(uinput[0]==2 && ballY[0]<280){ ballY[0] = ballY[0] + 10; }  //down
+	if(uinput[0]==3 && ballX[0] >= 10){ ballX[0] = ballX[0] - 10; }  //left
+	if(uinput[0]==4 && ballX[0]<280){ ballX[0] = ballX[0] + 10; }  //right
+	
+	for (i=0;i<10;i++){
+		if(ballX[0]==objectX[i] && ballY[0]==objectY[i] && objectUsed[i]==false){
+			objectUsed[i] = true;
+			if (objectType[i]==0) {score[0]=score[0]-1000;}
+			if (objectType[i]!=0) {score[0]=score[0]+100;}
+			
+		}
+	}
+
+	if(ballX[0]==targetX[0] && ballY[0]==targetY[0]) {
+	win[0] = true;
+	score[0] = score[0]+500;
+	}
+
+	if (score[0]<0) {gover[0]= true;}
+}
+
+
+
+
+
+
+
+void endgame(){
+	setColor(lightCoral);
+	fillRectangle(100,120,210,100);
+	setColor(black);
+	drawRectangle(100,120,210,100);
+	setColor(black);
+	drawString("GAME OVER", true, false, 20, 140,170);
+	
+	while(true){}
+		
+
+}
+
+void main(){
+	
+	int[] ballX = new int[1];
+	int[] ballY = new int[1];
+
+	int[] mapX = new int[1];
+	int[] mapY = new int[1];
+
+	int[] targetX = new int[1];
+	int[] targetY = new int[1];
+
+	int[] objectX = new int[10];
+	int[] objectY = new int[10];
+	int[] objectType = new int[10];
+	boolean[] objectUsed = new boolean[10];
+	boolean[] gover = new boolean[1];
+
+	int[] score = new int[1];
+	gover[0] = false;
+	boolean[] win = new boolean[1];
+	win[0] = false;
+	String key;
+	
+	int[] uinput = new int[1];
+	String scoreb;
+	int i=0;
+	
+	ballX[0] = 10;
+	ballY[0] = 10;
+	mapX[0] = 300;
+	mapY[0] = 300;
+	
+	
+	drawString("-Game Instructions-", true, false, 18, 50, 50);
+	drawString("Make the blue ball to the target. ", true, false, 18, 50, 70);
+	drawString("Use navagation keys on the keyboard.", true, false, 18, 50, 90);
+	drawString("Good luck!", true, false, 18, 50, 110);
+	drawString("Game designed by Jim Gao", true, false, 18, 50, 150);
+	drawString("Press any key to start....", true, false, 18, 50, 170);
+	
+	key = readKey();
+
+	
+	
+
+	
+	
+	while(true){
+		targetX[0] = randomInt(14)*20;
+		targetY[0] = randomInt(14)*20;
+		for (i=0;i<10;i++){
+			objectX[i] = randomInt(28)*10+10;
+			objectY[i] = randomInt(28)*10+10;
+			objectType[i]= randomInt(2);
+			objectUsed[i] = false;
+
+			if (objectX[i]<=10){objectX[i] = objectX[i] + 30;}
+			if (objectX[i]>=290){objectX[i] = objectX[i] - 30;}
+			if (objectY[i]<=10){objectY[i] = objectY[i] + 30;}
+			if (objectX[i]>=290){objectY[i] = objectY[i] -30;}
+		}
+		
+		repaint(ballX, ballY, mapX, mapY, targetX, targetY, objectX, objectY, objectType, objectUsed, score);
+		while(!win[0]){
+			key = readKey();
+		
+			if(key.equals("up")) {uinput[0] = 1;}
+			if(key.equals("down")) {uinput[0] = 2;}
+			if(key.equals("left")) {uinput[0] = 3;}
+			if(key.equals("right")) {uinput[0] = 4;}
+		
+		
+			updateLocation(uinput,ballX,ballY,targetX,targetY,win,objectX,objectY,objectType, objectUsed, score, gover);
+			repaint(ballX, ballY, mapX, mapY, targetX, targetY, objectX, objectY, objectType, objectUsed, score);
+
+			if (gover[0]) {endgame();}
+		}
+		setColor(black);
+		
+		
+		
+		win[0] = false;
+		
+	}
+
+	
+	
+}
